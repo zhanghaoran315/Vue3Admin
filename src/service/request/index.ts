@@ -1,9 +1,9 @@
-import axios from "axios"
-import type { AxiosInstance } from "axios"
+import axios from 'axios'
+import type { AxiosInstance } from 'axios'
 
-import type { HrInterceptor, HrRequestConfig } from "./type"
-import { ElLoading } from "element-plus"
-import "element-plus/es/components/loading/style/css"
+import type { HrInterceptor, HrRequestConfig } from './type'
+import { ElLoading } from 'element-plus'
+import 'element-plus/es/components/loading/style/css'
 
 const DEFAULT_SHOWLOADING = true
 
@@ -33,29 +33,29 @@ class HrRequest {
     // 全局的拦截器
     this.instance.interceptors.request.use(
       (config) => {
-        console.log("全局的拦截器-请求成功")
+        console.log('全局的拦截器-请求成功')
         if (this.showLoading) {
           this.loadingInstance = ElLoading.service({
             lock: true,
-            text: "Loading",
-            background: "rgba(0, 0, 0, 0.3)",
+            text: 'Loading',
+            background: 'rgba(0, 0, 0, 0.3)'
           })
         }
         return config
       },
       (error) => {
-        console.log("全局的拦截器-请求失败")
+        console.log('全局的拦截器-请求失败')
         return error
       }
     )
     this.instance.interceptors.response.use(
       (response) => {
-        console.log("全局的拦截器-响应成功")
+        console.log('全局的拦截器-响应成功')
         this.loadingInstance?.close()
         return response.data
       },
       (error) => {
-        console.log("全局的拦截器-响应失败")
+        console.log('全局的拦截器-响应失败')
         this.loadingInstance?.close()
         return error
       }
@@ -99,19 +99,19 @@ class HrRequest {
   }
 
   get<T = any>(config: HrRequestConfig<T>): Promise<T> {
-    return this.request({ ...config, method: "GET" })
+    return this.request({ ...config, method: 'GET' })
   }
 
   post<T = any>(config: HrRequestConfig<T>): Promise<T> {
-    return this.request({ ...config, method: "POST" })
+    return this.request({ ...config, method: 'POST' })
   }
 
   patch<T = any>(config: HrRequestConfig<T>): Promise<T> {
-    return this.request({ ...config, method: "PATCH" })
+    return this.request({ ...config, method: 'PATCH' })
   }
 
   delete<T = any>(config: HrRequestConfig<T>): Promise<T> {
-    return this.request({ ...config, method: "DELETE" })
+    return this.request({ ...config, method: 'DELETE' })
   }
 }
 

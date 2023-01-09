@@ -1,4 +1,4 @@
-import type { AxiosRequestConfig } from "axios"
+import type { AxiosRequestConfig } from 'axios'
 
 interface HrInterceptor<T = any> {
   requestInterceptor?: (config: AxiosRequestConfig) => AxiosRequestConfig
