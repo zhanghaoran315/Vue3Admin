@@ -1,26 +1,32 @@
 import HrRequest from './request/index'
 
 import { BASE_URL, TIME_OUT } from '@/config/index'
+import { localCache } from '@/utils'
+import { LOGIN_TOKEN } from '@/global'
 
 export default new HrRequest({
   baseURL: BASE_URL,
   timeout: TIME_OUT,
   interceptors: {
     requestInterceptor: (config) => {
-      console.log('实例的请求拦截器-请求成功')
+      // console.log('实例的请求拦截器', config)
+      const token = localCache.getItem(LOGIN_TOKEN)
+      if (config.headers && token) {
+        ;(config.headers as any).Authorization = 'Bearer ' + token
+      }
+
       return config
     },
     requestInterceptorCatch: (error) => {
-      console.log('实例的请求拦截器-请求失败')
       return error
     },
     responseInterceptor: (response) => {
-      console.log('实例的响应拦截器-响应成功')
       return response
     },
     responseInterceptorCatch: (error) => {
-      console.log('实例的响应拦截器-响应失败')
       return error
     }
   }
 })
+
+export * from './login'

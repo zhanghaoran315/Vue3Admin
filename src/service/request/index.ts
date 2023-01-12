@@ -3,7 +3,6 @@ import type { AxiosInstance } from 'axios'
 
 import type { HrInterceptor, HrRequestConfig } from './type'
 import { ElLoading } from 'element-plus'
-import 'element-plus/es/components/loading/style/css'
 
 const DEFAULT_SHOWLOADING = true
 
@@ -33,7 +32,7 @@ class HrRequest {
     // 全局的拦截器
     this.instance.interceptors.request.use(
       (config) => {
-        console.log('全局的拦截器-请求成功')
+        // console.log('全局的拦截器-请求成功')
         if (this.showLoading) {
           this.loadingInstance = ElLoading.service({
             lock: true,
@@ -44,18 +43,18 @@ class HrRequest {
         return config
       },
       (error) => {
-        console.log('全局的拦截器-请求失败')
+        // console.log('全局的拦截器-请求失败')
         return error
       }
     )
     this.instance.interceptors.response.use(
       (response) => {
-        console.log('全局的拦截器-响应成功')
+        // console.log('全局的拦截器-响应成功')
         this.loadingInstance?.close()
         return response.data
       },
       (error) => {
-        console.log('全局的拦截器-响应失败')
+        // console.log('全局的拦截器-响应失败')
         this.loadingInstance?.close()
         return error
       }
