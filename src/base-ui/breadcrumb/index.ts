@@ -1,3 +1,3 @@
-import HrBreadCrumb from './src/index.vue'
+import HrBreadCrumb from './src/breadcrumb.vue'
 
 export default HrBreadCrumb

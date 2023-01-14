@@ -1,3 +1,3 @@
-import HrCard from './src/index.vue'
+import HrCard from './src/card.vue'
 
 export default HrCard

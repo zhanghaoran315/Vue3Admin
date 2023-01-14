@@ -15,5 +15,5 @@ function registerStore(app: App) {
 
 export default registerStore
 
-export * from './counter'
 export * from './login'
+export * from './main/system'

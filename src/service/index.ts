@@ -30,3 +30,4 @@ export default new HrRequest({
 })
 
 export * from './login'
+export * from './main/system'
