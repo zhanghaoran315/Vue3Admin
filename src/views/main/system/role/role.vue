@@ -1,12 +1,18 @@
+<script setup lang="ts" name="role">
+import PageContent from '@/components/page-content/page-content.vue'
+import PageSearch from '@/components/page-search/page-search.vue'
+import { searchConfig, contentConfig } from './config'
+</script>
+
 <template>
   <div class="role">
-    <h2>role</h2>
+    <PageSearch :searchConfig="searchConfig" />
+    <PageContent :contentConfig="contentConfig" pageName="role" />
   </div>
 </template>
 
-<script setup lang="ts" name="role"></script>
-
 <style scoped>
 .role {
+  height: 100%;
 }
 </style>

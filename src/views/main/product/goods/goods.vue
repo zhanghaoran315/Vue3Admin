@@ -1,12 +1,19 @@
+<script setup lang="ts" name="goods">
+import PageContent from '@/components/page-content/page-content.vue'
+import { contentConfig } from './config'
+</script>
+
 <template>
   <div class="goods">
-    <h2>goods</h2>
+    <PageContent
+      :content-config="contentConfig"
+      page-name="goods"
+    ></PageContent>
   </div>
 </template>
 
-<script setup lang="ts" name="goods"></script>
-
 <style scoped>
 .goods {
+  height: 100%;
 }
 </style>

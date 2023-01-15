@@ -8,5 +8,6 @@
 
 <style scoped>
 .category {
+  height: 100%;
 }
 </style>

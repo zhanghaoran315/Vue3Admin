@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import HrForm from '@/base-ui/form'
-import type { IFormItem } from '@/base-ui/form'
 import { ref } from 'vue'
 
 const props = defineProps({
@@ -27,6 +26,9 @@ const onQueryClick = () => {
 
 const onResetClick = () => {
   formData.value = formOriginData
+  // for (const key in formOriginData) {
+  //   formData.value[key] = formOriginData[key]
+  // }
   emit('reset')
 }
 </script>
@@ -60,6 +62,7 @@ const onResetClick = () => {
     font-size: 18px;
     font-weight: 700;
     margin-bottom: 20px;
+    margin-top: 5px;
 
     text-align: center;
   }

@@ -65,10 +65,10 @@ export const useLoginStore = defineStore('login', {
           userInfo,
           userMenus
         })
-      }
 
-      const routes = mapMenusToRoutes(userMenus)
-      routes.forEach((route) => router.addRoute('main', route))
+        const routes = mapMenusToRoutes(userMenus)
+        routes.forEach((route) => router.addRoute('main', route))
+      }
     }
   }
 })

@@ -3,50 +3,47 @@ import HrTable from '@/base-ui/table'
 
 import { useSystemStore } from '@/stores'
 import { storeToRefs } from 'pinia'
-import { reactive } from 'vue'
-import type { ITableItem } from '@/base-ui/table'
-
-import { formatUTCString, formatTimestamp } from '@/utils'
+import { ref, watch, onActivated, onDeactivated } from 'vue'
 
 const props = defineProps({
+  contentConfig: {
+    type: Object,
+    required: true
+  },
   pageName: {
     type: String,
     default: ''
   }
 })
 
-const queryInfo = reactive({
-  offset: 0,
-  size: 10
+const queryInfo = ref({
+  currentPage: 1,
+  pageSize: 10
 })
 
 const systemStore = useSystemStore()
 
-const { usersList, usersCount } = storeToRefs(systemStore)
+const { pageList, pageCount } = storeToRefs(systemStore)
 
-systemStore.getPageListAction(props.pageName, { ...queryInfo })
+const getPageData = (params: any = {}) => {
+  const offset = (queryInfo.value.currentPage - 1) * queryInfo.value.pageSize
+  const size = queryInfo.value.pageSize
 
-const tableItems: ITableItem[] = [
-  { prop: 'name', label: '用户名', minWidth: '100' },
-  { prop: 'realname', label: '真实姓名', minWidth: '100' },
-  { prop: 'cellphone', label: '手机号码', minWidth: '120' },
-  { prop: 'enable', label: '状态', minWidth: '100', slotName: 'status' },
-  {
-    prop: 'createAt',
-    label: '创建时间',
-    minWidth: '220',
-    slotName: 'createAt'
-  },
-  {
-    prop: 'updateAt',
-    label: '更新时间',
-    minWidth: '220',
-    slotName: 'updateAt'
-  },
-  { label: '操作', minWidth: '130', slotName: 'handler' }
-]
+  systemStore.getPageListAction(props.pageName, {
+    offset,
+    size,
+    ...params
+  })
+}
 
-const title = '用户列表'
+watch(queryInfo, () => getPageData())
+
+getPageData()
+
+onActivated(() => getPageData())
+onDeactivated(() => systemStore.$reset())
+
+defineExpose({ getPageData })
 
 const onEditClick = (row: any) => {}
 const onDeleteClick = (row: any) => {}
@@ -54,7 +51,12 @@ const onDeleteClick = (row: any) => {}
 
 <template>
   <div class="page-content">
-    <hr-table :table-data="usersList" :table-items="tableItems" :title="title">
+    <hr-table
+      :table-data="pageList"
+      :table-count="pageCount"
+      v-bind="contentConfig"
+      v-model:query="queryInfo"
+    >
       <!-- header里的插槽 -->
       <template #operate>
         <el-button>新建数据</el-button>
