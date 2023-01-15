@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { PropType } from 'vue'
+import { type PropType, ref, watch } from 'vue'
 import type { IFormItem } from '..'
 
 const props = defineProps({
@@ -36,6 +36,17 @@ const emit = defineEmits(['update:model-value'])
 const onValueChange = (value: any, field: string) => {
   emit('update:model-value', { ...props.modelValue, [field]: value })
 }
+
+const formData = ref({ ...props.modelValue })
+watch(
+  formData,
+  (newValue) => {
+    emit('update:model-value', newValue)
+  },
+  {
+    deep: true
+  }
+)
 </script>
 
 <template>
@@ -56,8 +67,7 @@ const onValueChange = (value: any, field: string) => {
                 v-if="item.type === 'input' || item.type === 'password'"
               >
                 <el-input
-                  :model-value="modelValue[item.field]"
-                  @update:model-value="onValueChange($event, item.field)"
+                  v-model="formData[item.field]"
                   :placeholder="item.placeholder"
                   :show-password="item.type === 'password'"
                 ></el-input>
@@ -66,8 +76,7 @@ const onValueChange = (value: any, field: string) => {
                 <el-select
                   :placeholder="item.placeholder"
                   style="width: 100%"
-                  :model-value="modelValue[item.field]"
-                  @update:model-value="onValueChange($event, item.field)"
+                  v-model="formData[item.field]"
                 >
                   <el-option
                     v-for="iten in item.options"
@@ -78,10 +87,9 @@ const onValueChange = (value: any, field: string) => {
               </template>
               <template v-else-if="item.type === 'datepicker'">
                 <el-date-picker
-                  :model-value="modelValue[item.field]"
+                  v-model="formData[item.field]"
                   style="width: 100%"
                   v-bind="item.otherOptions"
-                  @update:model-value="onValueChange($event, item.field)"
                 />
               </template>
             </el-form-item>
