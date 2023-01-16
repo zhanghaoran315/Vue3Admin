@@ -6,3 +6,9 @@ export function getPageList(url: string, queryInfo: string) {
     data: queryInfo
   })
 }
+
+export function deletePageItem(url: string) {
+  return hrRequest.delete({
+    url: url
+  })
+}

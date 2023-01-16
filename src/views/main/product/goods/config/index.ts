@@ -3,7 +3,7 @@ export const contentConfig = {
   tableItems: [
     { prop: 'name', label: '商品名称', minWidth: '120' },
     { prop: 'oldPrice', label: '原价格', minWidth: '60', slotName: 'oldPrice' },
-    { prop: 'newPrice', label: '现价格', minWidth: '60' },
+    { prop: 'newPrice', label: '现价格', minWidth: '60', slotName: 'newPrice' },
     { prop: 'imgUrl', label: '商品图片', minWidth: '100', slotName: 'image' },
     { prop: 'status', label: '状态', minWidth: '70', slotName: 'status' },
     { prop: 'inventoryCount', label: '库存', minWidth: '60' },

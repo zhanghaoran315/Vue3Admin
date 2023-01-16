@@ -34,6 +34,10 @@ const props = defineProps({
   showIndexColumn: {
     type: Boolean,
     default: true
+  },
+  childrenProps: {
+    type: Object,
+    default: () => ({})
   }
 })
 
@@ -58,7 +62,12 @@ const handleCurrentChange = (currentPage: number) => {
         </div>
       </slot>
     </div>
-    <el-table :data="tableData" border style="width: 100%">
+    <el-table
+      :data="tableData"
+      border
+      style="width: 100%"
+      v-bind="childrenProps"
+    >
       <el-table-column
         v-if="showSelectColumn"
         type="selection"

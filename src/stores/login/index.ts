@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { localCache, loadLocalRoutes, mapMenusToRoutes } from '@/utils'
+import { localCache, mapMenusToRoutes, mapMenusToPermissions } from '@/utils'
 import router from '@/router'
 import type { IAccount } from '@/types'
 
@@ -11,6 +11,7 @@ interface ILoginState {
   userName: string
   userInfo: any
   userMenus: any[]
+  permissions: string[]
 }
 
 export const useLoginStore = defineStore('login', {
@@ -19,7 +20,8 @@ export const useLoginStore = defineStore('login', {
       token: '',
       userName: '',
       userInfo: {},
-      userMenus: []
+      userMenus: [],
+      permissions: []
     }
   },
   actions: {
@@ -45,11 +47,15 @@ export const useLoginStore = defineStore('login', {
       this.userMenus = userMenus
       localCache.setItem('userMenus', userMenus)
 
-      // 动态添加路由
+      // 4.获取按钮权限
+      const permissions = mapMenusToPermissions(userMenus)
+      this.permissions = permissions
+
+      // 5.动态添加路由
       const routes = mapMenusToRoutes(userMenus)
       routes.forEach((route) => router.addRoute('main', route))
 
-      // 4.跳转到首页
+      // 6.跳转到首页
       router.push('/main')
     },
     initialStore() {
@@ -66,6 +72,11 @@ export const useLoginStore = defineStore('login', {
           userMenus
         })
 
+        // 1.获取按钮权限
+        const permissions = mapMenusToPermissions(userMenus)
+        this.permissions = permissions
+
+        // 2.动态添加路由
         const routes = mapMenusToRoutes(userMenus)
         routes.forEach((route) => router.addRoute('main', route))
       }

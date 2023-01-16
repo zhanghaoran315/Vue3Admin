@@ -5,10 +5,24 @@ import { contentConfig } from './config'
 
 <template>
   <div class="goods">
-    <PageContent
-      :content-config="contentConfig"
-      page-name="goods"
-    ></PageContent>
+    <PageContent :content-config="contentConfig" page-name="goods">
+      <template #oldPrice="{ row, prop }">
+        {{ '¥ ' + row[prop] }}
+      </template>
+      <template #newPrice="{ row, prop }">
+        {{ '¥ ' + row[prop] }}
+      </template>
+      <template #image="{ row, prop }">
+        <el-image
+          style="width: 70px; height: 80px"
+          :src="row[prop]"
+          :zoom-rate="1.2"
+          :preview-src-list="[row[prop]]"
+          fit="cover"
+          preview-teleported
+        />
+      </template>
+    </PageContent>
   </div>
 </template>
 

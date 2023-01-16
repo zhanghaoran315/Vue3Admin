@@ -22,11 +22,8 @@ export const contentConfig = {
   ],
   showIndexColumn: false,
   showSelectColumn: false,
-  // childrenProps: {
-  //   rowKey: 'id',
-  //   treeProps: {
-  //     children: 'children'
-  //   }
-  // },
+  childrenProps: {
+    rowKey: 'id'
+  },
   showFooter: false
 }

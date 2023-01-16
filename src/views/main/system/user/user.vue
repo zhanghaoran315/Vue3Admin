@@ -19,6 +19,13 @@ const { pageContentRef, onQuery, onReset } = usePageSearch()
 //   console.log('点击重置')
 //   pageContentRef.value?.getPageData()
 // }
+
+const onCreate = () => {
+  console.log('点击新增')
+}
+const onUpdate = (item: any) => {
+  console.log('点击编辑', item)
+}
 </script>
 
 <template>
@@ -32,6 +39,8 @@ const { pageContentRef, onQuery, onReset } = usePageSearch()
       ref="pageContentRef"
       :contentConfig="contentConfig"
       pageName="users"
+      @create="onCreate"
+      @update="onUpdate"
     />
   </div>
 </template>
