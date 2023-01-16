@@ -1,63 +1,104 @@
 <script lang="ts" setup>
 import HrTable from '@/base-ui/table'
-
 import { useSystemStore } from '@/stores'
 import { storeToRefs } from 'pinia'
-import { reactive } from 'vue'
-import type { ITableItem } from '@/base-ui/table'
-
-import { formatUTCString, formatTimestamp } from '@/utils'
+import { ref, watch, onActivated, onDeactivated } from 'vue'
+import { usePermission } from '@/hooks'
 
 const props = defineProps({
+  contentConfig: {
+    type: Object,
+    required: true
+  },
   pageName: {
     type: String,
     default: ''
   }
 })
 
-const queryInfo = reactive({
-  offset: 0,
-  size: 10
+const queryInfo = ref({
+  currentPage: 1,
+  pageSize: 10
 })
 
 const systemStore = useSystemStore()
+const { pageList, pageCount } = storeToRefs(systemStore)
 
-const { usersList, usersCount } = storeToRefs(systemStore)
+// 1.获取操作的权限
+const isCreate = usePermission(props.pageName, 'create')
+const isDelete = usePermission(props.pageName, 'delete')
+const isUpdate = usePermission(props.pageName, 'update')
+const isQuery = usePermission(props.pageName, 'query')
 
-systemStore.getPageListAction(props.pageName, { ...queryInfo })
+const getPageData = (params: any = {}) => {
+  if (!isQuery) return
+  const offset = (queryInfo.value.currentPage - 1) * queryInfo.value.pageSize
+  const size = queryInfo.value.pageSize
 
-const tableItems: ITableItem[] = [
-  { prop: 'name', label: '用户名', minWidth: '100' },
-  { prop: 'realname', label: '真实姓名', minWidth: '100' },
-  { prop: 'cellphone', label: '手机号码', minWidth: '120' },
-  { prop: 'enable', label: '状态', minWidth: '100', slotName: 'status' },
-  {
-    prop: 'createAt',
-    label: '创建时间',
-    minWidth: '220',
-    slotName: 'createAt'
-  },
-  {
-    prop: 'updateAt',
-    label: '更新时间',
-    minWidth: '220',
-    slotName: 'updateAt'
-  },
-  { label: '操作', minWidth: '130', slotName: 'handler' }
-]
+  systemStore.getPageListAction(props.pageName, {
+    offset,
+    size,
+    ...params
+  })
+}
 
-const title = '用户列表'
+// 监听新增、编辑、删除操作后还原分页器
+systemStore.$onAction(({ name, after }) => {
+  after(() => {
+    if (name === 'deletePageItemAction') {
+      queryInfo.value.currentPage = 1
+      queryInfo.value.pageSize = 10
+    }
+  })
+})
 
-const onEditClick = (row: any) => {}
-const onDeleteClick = (row: any) => {}
+watch(queryInfo, () => getPageData())
+getPageData()
+
+// 4.实现跨组件插槽
+// 4.1 获取其他动态插槽的名称
+const otherPropSlots: Record<string, string | number>[] =
+  props.contentConfig.tableItems.filter((item: any) => {
+    if (item.slotName === undefined) return false
+    if (item.slotName === 'status') return false
+    if (item.slotName === 'createAt') return false
+    if (item.slotName === 'updateAt') return false
+    if (item.slotName === 'handler') return false
+    return true
+  })
+
+const emit = defineEmits(['create', 'update'])
+
+// 5.新增、编辑、删除的实现
+const onCreate = () => {
+  emit('create')
+}
+
+const onUpdate = (row: any) => {
+  emit('update', row)
+}
+
+const onDelete = (row: any) => {
+  systemStore.deletePageItemAction(props.pageName, row.id)
+}
+
+onActivated(() => getPageData())
+onDeactivated(() => systemStore.$reset())
+
+defineExpose({ getPageData })
 </script>
 
 <template>
   <div class="page-content">
-    <hr-table :table-data="usersList" :table-items="tableItems" :title="title">
+    <hr-table
+      :table-data="pageList"
+      :table-count="pageCount"
+      v-bind="contentConfig"
+      v-model:query="queryInfo"
+    >
       <!-- header里的插槽 -->
       <template #operate>
-        <el-button>新建数据</el-button>
+        <el-button @click="onCreate" v-if="isCreate">新建数据</el-button>
       </template>
       <!-- el-table-column 里的组件插槽 -->
       <template #status="{ row, prop }">
@@ -77,7 +118,8 @@ const onDeleteClick = (row: any) => {}
           icon="Edit"
           size="small"
           type="primary"
-          @click="onEditClick(row)"
+          @click="onUpdate(row)"
+          v-if="isUpdate"
           >编辑</el-button
         >
         <el-button
@@ -85,9 +127,26 @@ const onDeleteClick = (row: any) => {}
           icon="Delete"
           size="small"
           type="primary"
-          @click="onDeleteClick(row)"
+          @click="onDelete(row)"
+          v-if="isDelete"
           >删除</el-button
         >
+      </template>
+
+      <!-- 在page-content中设置跨组件插槽 -->
+      <!-- 本质：在作用域插槽里面继续嵌套slot元素实现作用域插槽 -->
+      <template
+        v-for="item in otherPropSlots"
+        :key="item.prop"
+        #[item.slotName]="scope"
+      >
+        <template v-if="item.slotName">
+          <slot
+            :name="item.slotName"
+            :row="scope.row"
+            :prop="scope.prop"
+          ></slot>
+        </template>
       </template>
     </hr-table>
   </div>

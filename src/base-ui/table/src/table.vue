@@ -7,6 +7,14 @@ const props = defineProps({
     type: Array,
     default: () => []
   },
+  tableCount: {
+    type: Number,
+    default: 0
+  },
+  query: {
+    type: Object,
+    default: () => ({ currentPage: 1, pageSize: 10 })
+  },
   tableItems: {
     type: Array as PropType<ITableItem[]>,
     default: () => []
@@ -26,14 +34,22 @@ const props = defineProps({
   showIndexColumn: {
     type: Boolean,
     default: true
+  },
+  childrenProps: {
+    type: Object,
+    default: () => ({})
   }
 })
 
-const handleSizeChange = () => {}
-const handleCurrentChange = () => {}
+const emit = defineEmits(['update:query'])
 
-const currentPage = ref(1)
-const pageSize = ref(10)
+const handleSizeChange = (pageSize: number) => {
+  emit('update:query', { ...props.query, pageSize })
+}
+
+const handleCurrentChange = (currentPage: number) => {
+  emit('update:query', { ...props.query, currentPage })
+}
 </script>
 
 <template>
@@ -46,7 +62,12 @@ const pageSize = ref(10)
         </div>
       </slot>
     </div>
-    <el-table :data="tableData" border style="width: 100%">
+    <el-table
+      :data="tableData"
+      border
+      style="width: 100%"
+      v-bind="childrenProps"
+    >
       <el-table-column
         v-if="showSelectColumn"
         type="selection"
@@ -75,12 +96,12 @@ const pageSize = ref(10)
     <div class="footer" v-if="showFooter">
       <slot name="footer">
         <el-pagination
-          v-model:current-page="currentPage"
-          v-model:page-size="pageSize"
+          :current-page="query.currentPage"
+          :page-size="query.pageSize"
           :page-sizes="[10, 20, 30]"
           small
           layout="total, sizes, prev, pager, next"
-          :total="40"
+          :total="tableCount"
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
         />

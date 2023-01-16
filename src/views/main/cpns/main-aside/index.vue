@@ -79,7 +79,14 @@ const defaultActive = computed(() => {
   // 菜单剩下的部分
   background-color: #0c2135;
 
-  overflow: hidden;
+  // 侧边栏移除可滑动
+  overflow-x: hidden;
+  overflow-y: auto;
+  // 隐藏滚动条
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
   .logo {
     display: flex;
     align-items: center;

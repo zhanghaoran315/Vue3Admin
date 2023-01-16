@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { type PropType, ref, watch } from 'vue'
+import type { PropType } from 'vue'
 import type { IFormItem } from '..'
 
 const props = defineProps({
@@ -37,16 +37,17 @@ const onValueChange = (value: any, field: string) => {
   emit('update:model-value', { ...props.modelValue, [field]: value })
 }
 
-const formData = ref({ ...props.modelValue })
-watch(
-  formData,
-  (newValue) => {
-    emit('update:model-value', newValue)
-  },
-  {
-    deep: true
-  }
-)
+// 这种方案很不好理解
+// const formData = ref({ ...props.modelValue })
+// watch(
+//   formData,
+//   (newValue) => {
+//     emit('update:model-value', newValue)
+//   },
+//   {
+//     deep: true
+//   }
+// )
 </script>
 
 <template>
@@ -67,7 +68,8 @@ watch(
                 v-if="item.type === 'input' || item.type === 'password'"
               >
                 <el-input
-                  v-model="formData[item.field]"
+                  :model-value="modelValue[item.field]"
+                  @update:model-value="onValueChange($event, item.field)"
                   :placeholder="item.placeholder"
                   :show-password="item.type === 'password'"
                 ></el-input>
@@ -76,7 +78,8 @@ watch(
                 <el-select
                   :placeholder="item.placeholder"
                   style="width: 100%"
-                  v-model="formData[item.field]"
+                  :model-value="modelValue[item.field]"
+                  @update:model-value="onValueChange($event, item.field)"
                 >
                   <el-option
                     v-for="iten in item.options"
@@ -87,7 +90,8 @@ watch(
               </template>
               <template v-else-if="item.type === 'datepicker'">
                 <el-date-picker
-                  v-model="formData[item.field]"
+                  :model-value="modelValue[item.field]"
+                  @update:model-value="onValueChange($event, item.field)"
                   style="width: 100%"
                   v-bind="item.otherOptions"
                 />

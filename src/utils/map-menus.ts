@@ -2,6 +2,11 @@ import type { RouteRecordRaw } from 'vue-router'
 
 export let initMenu: any = null
 
+interface IBreadCrumb {
+  name: string
+  path?: string
+}
+
 // 0.加载本地路由
 export function loadLocalRoutes() {
   const allRoutes: RouteRecordRaw[] = []
@@ -56,7 +61,7 @@ export function mapMenusToRoutes(userMenus: any[]) {
   return routes
 }
 
-// 2.根据url获取对应的菜单
+// 2.根据path(url)获取对应的菜单
 export function mapPathToMenu(
   path: string,
   userMenus: any[],
@@ -82,12 +87,7 @@ export function mapPathToMenu(
   }
 }
 
-interface IBreadCrumb {
-  name: string
-  path?: string
-}
-
-// 3.根据url获取对应的breadcrumb数据
+// 3.根据path(url)获取对应的breadcrumb数据
 export function mapPathToBreadCrumbs(
   path: string,
   userMenus: any[]
@@ -95,4 +95,23 @@ export function mapPathToBreadCrumbs(
   const breadcrumbs: IBreadCrumb[] = []
   mapPathToMenu(path, userMenus, breadcrumbs)
   return breadcrumbs
+}
+
+// 4.根据userMenus里type为3的节点得到一个按钮权限数组
+export function mapMenusToPermissions(userMenus: any[]) {
+  const permissions: string[] = []
+
+  const recurseGetPermission = (menus: any[]) => {
+    for (const menu of menus) {
+      if (menu.type === 1 || menu.type === 2) {
+        recurseGetPermission(menu.children ?? [])
+      } else if (menu.type === 3) {
+        permissions.push(menu.permission)
+      }
+    }
+  }
+
+  recurseGetPermission(userMenus)
+
+  return permissions
 }
