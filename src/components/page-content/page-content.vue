@@ -45,7 +45,11 @@ const getPageData = (params: any = {}) => {
 // 监听新增、编辑、删除操作后还原分页器
 systemStore.$onAction(({ name, after }) => {
   after(() => {
-    if (name === 'deletePageItemAction') {
+    if (
+      name === 'deletePageItem' ||
+      name === 'createPageItem' ||
+      name === 'updatePageItem'
+    ) {
       queryInfo.value.currentPage = 1
       queryInfo.value.pageSize = 10
     }
@@ -79,7 +83,7 @@ const onUpdate = (row: any) => {
 }
 
 const onDelete = (row: any) => {
-  systemStore.deletePageItemAction(props.pageName, row.id)
+  systemStore.deletePageItem(props.pageName, row.id)
 }
 
 onActivated(() => getPageData())

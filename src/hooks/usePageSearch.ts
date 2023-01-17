@@ -5,11 +5,15 @@ export function usePageSearch() {
   const pageContentRef = ref<InstanceType<typeof PageContent>>()
 
   const onQuery = (params: any) => {
-    ;(pageContentRef.value as any).getPageData(params)
+    if (pageContentRef.value) {
+      ;(pageContentRef.value as any).getPageData(params)
+    }
   }
 
   const onReset = () => {
-    ;(pageContentRef.value as any).getPageData()
+    if (pageContentRef.value) {
+      ;(pageContentRef.value as any).getPageData()
+    }
   }
 
   return { pageContentRef, onQuery, onReset }

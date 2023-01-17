@@ -1,4 +1,4 @@
-<script lang="ts" setup>
+<script lang="ts" setup name="login">
 import LoginAccount from './cpns/login-account.vue'
 import LoginPhone from './cpns/login-phone.vue'
 

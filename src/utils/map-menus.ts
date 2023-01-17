@@ -115,3 +115,22 @@ export function mapMenusToPermissions(userMenus: any[]) {
 
   return permissions
 }
+
+// 5.根据menuList过滤出里面叶子菜单的id
+export function mapMenusToLeavesKeys(menuList: any[]) {
+  const leavesKeys: number[] = []
+
+  const _recurseGetLeaf = (menuList: any[]) => {
+    for (const menu of menuList) {
+      if (menu.children) {
+        _recurseGetLeaf(menu.children)
+      } else {
+        leavesKeys.push(menu.id)
+      }
+    }
+  }
+
+  _recurseGetLeaf(menuList)
+
+  return leavesKeys
+}

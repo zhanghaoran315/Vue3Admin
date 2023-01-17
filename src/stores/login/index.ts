@@ -6,6 +6,8 @@ import type { IAccount } from '@/types'
 import { accountLogin, getUserInfoById, getUserMenusByRoleId } from '@/service'
 import { LOGIN_TOKEN } from '@/global'
 
+import { useMainStore } from '..'
+
 interface ILoginState {
   token: string
   userName: string
@@ -33,6 +35,10 @@ export const useLoginStore = defineStore('login', {
       this.token = token
       localCache.setItem(LOGIN_TOKEN, token)
       localCache.setItem('userName', userName)
+
+      // 0.获取系统初始化数据
+      const mainStore = useMainStore()
+      mainStore.initialDataAction()
 
       // 2.获取 userInfo
       const userInfoResult = await getUserInfoById(id)
@@ -71,6 +77,10 @@ export const useLoginStore = defineStore('login', {
           userInfo,
           userMenus
         })
+
+        // 0.获取系统初始化数据
+        const mainStore = useMainStore()
+        mainStore.initialDataAction()
 
         // 1.获取按钮权限
         const permissions = mapMenusToPermissions(userMenus)

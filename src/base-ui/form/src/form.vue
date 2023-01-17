@@ -36,18 +36,6 @@ const emit = defineEmits(['update:model-value'])
 const onValueChange = (value: any, field: string) => {
   emit('update:model-value', { ...props.modelValue, [field]: value })
 }
-
-// 这种方案很不好理解
-// const formData = ref({ ...props.modelValue })
-// watch(
-//   formData,
-//   (newValue) => {
-//     emit('update:model-value', newValue)
-//   },
-//   {
-//     deep: true
-//   }
-// )
 </script>
 
 <template>
@@ -60,6 +48,7 @@ const onValueChange = (value: any, field: string) => {
         <template v-for="item in formItems" :key="item.field">
           <el-col v-bind="colLayout">
             <el-form-item
+              v-if="!item.isHidden"
               :label="item.label"
               :rules="item.rules"
               :style="itemStyle"

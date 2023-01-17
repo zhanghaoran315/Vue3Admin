@@ -1,31 +1,59 @@
 <script setup lang="ts" name="user">
-import PageContent from '@/components/page-content/page-content.vue'
 import PageSearch from '@/components/page-search/page-search.vue'
-import { searchConfig, contentConfig } from './config'
-import { ref } from 'vue'
+import PageContent from '@/components/page-content/page-content.vue'
+import PagePopup from '@/components/page-popup/page-popup.vue'
+import { searchConfig, contentConfig, popupConfig } from './config'
 
-import { usePageSearch } from '@/hooks'
+import { usePageSearch, usePagePopup } from '@/hooks'
+
+import { useMainStore } from '@/stores'
+import { storeToRefs } from 'pinia'
+import { computed } from 'vue'
 
 const { pageContentRef, onQuery, onReset } = usePageSearch()
 
-// const pageContentRef = ref<InstanceType<typeof PageContent>>()
+// 动态添加部门和角色列表
+const { entireDepartment, entireRole } = storeToRefs(useMainStore())
+// 数据请求到的处理
+const popupConfigRef = computed(() => {
+  const departmentItem = popupConfig.formItems.find(
+    (item: any) => item.field === 'departmentId'
+  )
 
-// const onQuery = (params: any) => {
-//   console.log('点击搜索：', params)
-//   pageContentRef.value?.getPageData(params)
-// }
+  departmentItem.options = entireDepartment.value.map((item) => {
+    return { label: item.name, value: item.id }
+  })
 
-// const onReset = () => {
-//   console.log('点击重置')
-//   pageContentRef.value?.getPageData()
-// }
+  const roleItem = popupConfig.formItems.find(
+    (item: any) => item.field === 'roleId'
+  )
 
-const onCreate = () => {
-  console.log('点击新增')
+  roleItem.options = entireRole.value.map((item) => {
+    return { label: item.name, value: item.id }
+  })
+
+  return popupConfig
+})
+
+// 1.pagePopup相关的hooks
+const createCb = () => {
+  const passwordItem = popupConfig.formItems.find(
+    (item: any) => item.field === 'password'
+  )
+  passwordItem.isHidden = false
 }
-const onUpdate = (item: any) => {
-  console.log('点击编辑', item)
+
+const updateCb = () => {
+  const passwordItem = popupConfig.formItems.find(
+    (item: any) => item.field === 'password'
+  )
+  passwordItem.isHidden = true
 }
+
+const { pagePopupRef, defaultInfo, onCreate, onUpdate } = usePagePopup(
+  createCb,
+  updateCb
+)
 </script>
 
 <template>
@@ -36,11 +64,17 @@ const onUpdate = (item: any) => {
       @reset="onReset"
     />
     <PageContent
+      pageName="users"
       ref="pageContentRef"
       :contentConfig="contentConfig"
-      pageName="users"
       @create="onCreate"
       @update="onUpdate"
+    />
+    <PagePopup
+      pageName="users"
+      ref="pagePopupRef"
+      :popupConfig="popupConfigRef"
+      :default-info="defaultInfo"
     />
   </div>
 </template>
