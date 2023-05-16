@@ -37,11 +37,11 @@ watch(
 )
 
 const systemStore = useSystemStore()
-const onConfirm = () => {
+const onConfirm = async () => {
   // 确认弹窗需要区分编辑还是新增
   if (props.defaultInfo.id) {
     // 编辑
-    systemStore.updatePageItem(
+    await systemStore.updatePageItem(
       props.pageName,
       {
         ...formData.value,
@@ -51,7 +51,7 @@ const onConfirm = () => {
     )
   } else {
     // 新增
-    systemStore.createPageItem(props.pageName, {
+    await systemStore.createPageItem(props.pageName, {
       ...formData.value,
       ...props.otherInfo
     })

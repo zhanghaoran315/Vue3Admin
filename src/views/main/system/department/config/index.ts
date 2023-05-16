@@ -51,3 +51,27 @@ export const contentConfig = {
     { label: '操作', minWidth: '120', slotName: 'handler' }
   ]
 }
+
+export const popupConfig = {
+  formItems: [
+    {
+      field: 'name',
+      type: 'input',
+      label: '部门名称',
+      placeholder: '请输入部门名称'
+    },
+    {
+      field: 'leader',
+      type: 'input',
+      label: '领导',
+      placeholder: '请输入领导'
+    }
+  ],
+  colLayout: {
+    span: 24
+  },
+  labelWidth: '80px',
+  itemStyle: {
+    padding: '5px 10px'
+  }
+}

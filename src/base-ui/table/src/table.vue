@@ -29,7 +29,7 @@ const props = defineProps({
   },
   showSelectColumn: {
     type: Boolean,
-    default: true
+    default: false
   },
   showIndexColumn: {
     type: Boolean,
@@ -85,8 +85,13 @@ const handleCurrentChange = (currentPage: number) => {
       <!-- 自定义列 -->
       <template v-for="item in tableItems" :key="item.label">
         <el-table-column v-bind="item" align="center" show-overflow-tooltip>
-          <template v-slot="{ row }">
-            <slot :name="item.slotName" :row="row" :prop="item.prop ?? ''">
+          <template v-slot="{ row, column }">
+            <slot
+              :name="item.slotName"
+              :row="row"
+              :column="column"
+              :prop="item.prop ?? ''"
+            >
               {{ row[item.prop ?? ''] }}
             </slot>
           </template>

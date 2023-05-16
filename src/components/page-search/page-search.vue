@@ -38,7 +38,7 @@ const onResetClick = () => {
     <hr-form v-bind="searchConfig" v-model="formData">
       <template #header>
         <div class="header">
-          <h2>高级检索</h2>
+          <!-- <h2>高级检索</h2> -->
         </div>
       </template>
       <template #footer>

@@ -61,6 +61,7 @@ const onValueChange = (value: any, field: string) => {
                   @update:model-value="onValueChange($event, item.field)"
                   :placeholder="item.placeholder"
                   :show-password="item.type === 'password'"
+                  autocomplete="new-password"
                 ></el-input>
               </template>
               <template v-else-if="item.type === 'select'">

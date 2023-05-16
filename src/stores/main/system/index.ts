@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia'
+import { ElMessage } from 'element-plus'
 
 import {
   getPageList,
@@ -19,9 +20,11 @@ export const useSystemStore = defineStore('system', {
     async getPageListAction(pageName: string, queryInfo: any) {
       const pageUrl = `${pageName}/list`
 
-      const result = await getPageList(pageUrl, queryInfo)
+      const res = await getPageList(pageUrl, queryInfo)
 
-      const { list: pageList, totalCount: pageCount = 0 } = result.data
+      if (res.code !== 200) return ElMessage.error(res.message)
+
+      const { list: pageList, totalCount: pageCount = 0 } = res.data
 
       this.$patch({
         pageList,
@@ -33,7 +36,10 @@ export const useSystemStore = defineStore('system', {
       const pageUrl = `/${pageName}/${id}`
 
       // 1.删除数据的请求
-      await deletePageItem(pageUrl)
+      const res = await deletePageItem(pageUrl)
+
+      if (res.code === 200) ElMessage.success('删除成功！')
+      else return ElMessage.error(res.message)
 
       // 2.重新请求最新的数据
       this.getPageListAction(pageName, {
@@ -46,7 +52,10 @@ export const useSystemStore = defineStore('system', {
       const pageUrl = `/${pageName}`
 
       // 1.新增数据
-      await createPageItem(pageUrl, createData)
+      const res = await createPageItem(pageUrl, createData)
+
+      if (res.code === 200) ElMessage.success('新增成功！')
+      else return ElMessage.error(res.message)
 
       // 2.重新请求数据
       this.getPageListAction(pageName, {
@@ -58,8 +67,11 @@ export const useSystemStore = defineStore('system', {
     async updatePageItem(pageName: string, updateData: any, id: number) {
       const pageUrl = `/${pageName}/${id}`
 
-      // 1.新增数据
-      await updatePageItem(pageUrl, updateData)
+      // 1.编辑数据
+      const res = await updatePageItem(pageUrl, updateData)
+
+      if (res.code === 200) ElMessage.success('编辑成功！')
+      else return ElMessage.error(res.message)
 
       // 2.重新请求数据
       this.getPageListAction(pageName, {

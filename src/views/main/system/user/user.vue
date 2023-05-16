@@ -14,7 +14,28 @@ const { pageContentRef, onQuery, onReset } = usePageSearch()
 
 // 动态添加部门和角色列表
 const { entireDepartment, entireRole } = storeToRefs(useMainStore())
-// 数据请求到的处理
+// 数据请求到的处理 - 搜索框
+const searchConfigRef = computed(() => {
+  const departmentItem = searchConfig.formItems.find(
+    (item: any) => item.field === 'departmentId'
+  )
+
+  departmentItem.options = entireDepartment.value.map((item) => {
+    return { label: item.name, value: item.id }
+  })
+
+  const roleItem = searchConfig.formItems.find(
+    (item: any) => item.field === 'roleId'
+  )
+
+  roleItem.options = entireRole.value.map((item) => {
+    return { label: item.name, value: item.id }
+  })
+
+  return searchConfig
+})
+
+// 数据请求到的处理 - 弹出框
 const popupConfigRef = computed(() => {
   const departmentItem = popupConfig.formItems.find(
     (item: any) => item.field === 'departmentId'
@@ -54,12 +75,16 @@ const { pagePopupRef, defaultInfo, onCreate, onUpdate } = usePagePopup(
   createCb,
   updateCb
 )
+
+const optionsToLabel = (options: any[], value: number) => {
+  return options.find((item) => item.id === value)?.name ?? value
+}
 </script>
 
 <template>
   <div class="user">
     <PageSearch
-      :searchConfig="searchConfig"
+      :searchConfig="searchConfigRef"
       @query="onQuery"
       @reset="onReset"
     />
@@ -69,7 +94,14 @@ const { pagePopupRef, defaultInfo, onCreate, onUpdate } = usePagePopup(
       :contentConfig="contentConfig"
       @create="onCreate"
       @update="onUpdate"
-    />
+    >
+      <template #department="{ row, prop }">
+        {{ optionsToLabel(entireDepartment, row[prop]) }}
+      </template>
+      <template #role="{ row, prop }">
+        {{ optionsToLabel(entireRole, row[prop]) }}
+      </template>
+    </PageContent>
     <PagePopup
       pageName="users"
       ref="pagePopupRef"

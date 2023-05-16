@@ -30,11 +30,11 @@ export const useLoginStore = defineStore('login', {
     async accountLoginAction(account: IAccount) {
       // 1.获取 id 和 token
       const loginResult = await accountLogin(account)
-      const { id, name: userName, token } = loginResult.data
-      this.userName = userName
+      const { id, name, token } = loginResult.data
+      this.userName = name
       this.token = token
       localCache.setItem(LOGIN_TOKEN, token)
-      localCache.setItem('userName', userName)
+      localCache.setItem('userName', name)
 
       // 0.获取系统初始化数据
       const mainStore = useMainStore()

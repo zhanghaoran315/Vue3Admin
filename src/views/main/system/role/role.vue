@@ -4,7 +4,7 @@ import PageSearch from '@/components/page-search/page-search.vue'
 import PagePopup from '@/components/page-popup/page-popup.vue'
 import { searchConfig, contentConfig, popupConfig } from './config'
 
-import { usePagePopup } from '@/hooks'
+import { usePagePopup, usePageSearch } from '@/hooks'
 import type { ElTree } from 'element-plus'
 
 import { useMainStore } from '@/stores'
@@ -18,6 +18,8 @@ const { entireMenu } = storeToRefs(useMainStore())
 // el-tree数据的回显
 const elTreeRef = ref<InstanceType<typeof ElTree>>()
 const updateCb = (item: any) => {
+  console.log('item: ', item)
+
   const leavesKeys = mapMenusToLeavesKeys(item.menuList)
   // default-checked-keys 也可以使用这个属性
   nextTick(() => {
@@ -47,12 +49,19 @@ const onCheckChange = (data1: any, data2: any) => {
 
   otherInfo.value = { menuList }
 }
+
+const { onQuery, onReset, pageContentRef } = usePageSearch()
 </script>
 
 <template>
   <div class="role">
-    <PageSearch :searchConfig="searchConfig" />
+    <PageSearch
+      :searchConfig="searchConfig"
+      @query="onQuery"
+      @reset="onReset"
+    />
     <PageContent
+      ref="pageContentRef"
       page-name="role"
       :contentConfig="contentConfig"
       @create="onCreate"

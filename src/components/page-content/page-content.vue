@@ -4,6 +4,7 @@ import { useSystemStore } from '@/stores'
 import { storeToRefs } from 'pinia'
 import { ref, watch, onActivated, onDeactivated } from 'vue'
 import { usePermission } from '@/hooks'
+import { ElMessageBox, ElMessage } from 'element-plus'
 
 const props = defineProps({
   contentConfig: {
@@ -25,10 +26,14 @@ const systemStore = useSystemStore()
 const { pageList, pageCount } = storeToRefs(systemStore)
 
 // 1.获取操作的权限
-const isCreate = usePermission(props.pageName, 'create')
-const isDelete = usePermission(props.pageName, 'delete')
-const isUpdate = usePermission(props.pageName, 'update')
-const isQuery = usePermission(props.pageName, 'query')
+// const isCreate = usePermission(props.pageName, 'create')
+// const isDelete = usePermission(props.pageName, 'delete')
+// const isUpdate = usePermission(props.pageName, 'update')
+// const isQuery = usePermission(props.pageName, 'query')
+const isCreate = true
+const isDelete = true
+const isUpdate = true
+const isQuery = true
 
 const getPageData = (params: any = {}) => {
   if (!isQuery) return
@@ -64,7 +69,7 @@ getPageData()
 const otherPropSlots: Record<string, string | number>[] =
   props.contentConfig.tableItems.filter((item: any) => {
     if (item.slotName === undefined) return false
-    if (item.slotName === 'status') return false
+    // if (item.slotName === 'status') return false
     if (item.slotName === 'createAt') return false
     if (item.slotName === 'updateAt') return false
     if (item.slotName === 'handler') return false
@@ -82,8 +87,16 @@ const onUpdate = (row: any) => {
   emit('update', row)
 }
 
-const onDelete = (row: any) => {
-  systemStore.deletePageItem(props.pageName, row.id)
+const onDelete = async (row: any) => {
+  const statment = '确定删除吗？'
+
+  ElMessageBox.confirm(statment, '系统提示', {
+    center: true,
+    customClass: 'msg-box'
+  }).then(
+    () => systemStore.deletePageItem(props.pageName, row.id),
+    () => {}
+  )
 }
 
 onActivated(() => getPageData())
@@ -102,14 +115,11 @@ defineExpose({ getPageData })
     >
       <!-- header里的插槽 -->
       <template #operate>
-        <el-button @click="onCreate" v-if="isCreate">新建数据</el-button>
+        <el-button @click="onCreate" v-if="isCreate">{{
+          `新增${contentConfig?.title.replace('列表', '')}`
+        }}</el-button>
       </template>
       <!-- el-table-column 里的组件插槽 -->
-      <template #status="{ row, prop }">
-        <el-tag :type="row[prop] ? 'success' : 'warning'">{{
-          row[prop] ? '启用' : '禁用'
-        }}</el-tag>
-      </template>
       <template #createAt="{ row, prop }">
         <strong>{{ $format.formatTime(row[prop]) }}</strong>
       </template>
@@ -148,6 +158,7 @@ defineExpose({ getPageData })
           <slot
             :name="item.slotName"
             :row="scope.row"
+            :column="scope.column"
             :prop="scope.prop"
           ></slot>
         </template>
@@ -157,6 +168,10 @@ defineExpose({ getPageData })
 </template>
 
 <style scoped lang="less">
+:global(.el-overlay.is-message-box .el-overlay-message-box) {
+  top: 15vh;
+  bottom: auto;
+}
 .page-content {
   padding: 20px;
   border-top: 20px solid #f0f2f5;

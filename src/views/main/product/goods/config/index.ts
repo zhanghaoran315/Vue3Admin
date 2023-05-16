@@ -5,7 +5,7 @@ export const contentConfig = {
     { prop: 'oldPrice', label: '原价格', minWidth: '60', slotName: 'oldPrice' },
     { prop: 'newPrice', label: '现价格', minWidth: '60', slotName: 'newPrice' },
     { prop: 'imgUrl', label: '商品图片', minWidth: '100', slotName: 'image' },
-    { prop: 'status', label: '状态', minWidth: '70', slotName: 'status' },
+    // { prop: 'status', label: '状态', minWidth: '70', slotName: 'status' },
     { prop: 'inventoryCount', label: '库存', minWidth: '60' },
     { prop: 'saleCount', label: '销量', minWidth: '60' },
     // { prop: 'favorCount', label: '收藏', minWidth: '50' },

@@ -1,4 +1,4 @@
-export const searchConfig = {
+export const searchConfig: Record<string, any> = {
   formItems: [
     {
       field: 'name',
@@ -19,20 +19,25 @@ export const searchConfig = {
       placeholder: '请输入电话号码'
     },
     {
-      field: 'enable',
+      field: 'roleId',
       type: 'select',
-      label: '用户状态',
-      placeholder: '请选择用户状态',
-      options: [
-        { label: '可用', value: 1 },
-        { label: '禁用', value: 0 }
-      ]
+      label: '角色',
+      placeholder: '请选择',
+      options: []
+    },
+    {
+      field: 'departmentId',
+      type: 'select',
+      label: '所在部门',
+      placeholder: '请选择',
+      options: []
     },
     {
       field: 'createAt',
       type: 'datepicker',
       label: '创建时间',
       otherOptions: {
+        valueFormat: 'YYYY-MM-DD',
         type: 'daterange',
         startPlaceholder: '开始时间',
         endPlaceholder: '结束时间'
@@ -50,17 +55,23 @@ export const contentConfig = {
     { prop: 'name', label: '用户名', minWidth: '100' },
     { prop: 'realname', label: '真实姓名', minWidth: '100' },
     { prop: 'cellphone', label: '手机号码', minWidth: '120' },
-    { prop: 'enable', label: '状态', minWidth: '100', slotName: 'status' },
+    { prop: 'roleId', label: '角色', minWidth: '100', slotName: 'role' },
+    {
+      prop: 'departmentId',
+      label: '所在部门',
+      minWidth: '100',
+      slotName: 'department'
+    },
     {
       prop: 'createAt',
       label: '创建时间',
-      minWidth: '220',
+      minWidth: '200',
       slotName: 'createAt'
     },
     {
       prop: 'updateAt',
       label: '更新时间',
-      minWidth: '220',
+      minWidth: '200',
       slotName: 'updateAt'
     },
     { label: '操作', minWidth: '130', slotName: 'handler' }
