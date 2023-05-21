@@ -23,7 +23,7 @@ const onFoldChange = (isFold: boolean) => (isCollapse.value = isFold)
           <div class="wrapper">
             <router-view v-slot="{ Component }">
               <transition name="zhr" mode="out-in">
-                <keep-alive>
+                <keep-alive exclude="dashboard">
                   <component :is="Component"></component>
                 </keep-alive>
               </transition>

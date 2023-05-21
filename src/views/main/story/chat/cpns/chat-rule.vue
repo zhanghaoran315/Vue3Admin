@@ -2,7 +2,6 @@
 import { ref } from 'vue'
 import RichText from '@/components/rich-text/rich-text.vue'
 import type { ElForm } from 'element-plus'
-import { publishMoment } from '@/service/main/story'
 
 const richTextRef = ref<InstanceType<typeof RichText>>()
 const momentFormRef = ref<InstanceType<typeof ElForm>>()
@@ -12,21 +11,15 @@ const moment = ref({
   content: ''
 })
 
-const onConfirm = () => {
-  momentFormRef.value?.validate((isValid: any) => {
-    if (isValid) {
-      console.log('表单参数：', moment.value)
+const isEmpty = () => {
+  return !richTextRef.value?.editorRef.getText().trim().length
+}
 
-      const params = {
-        ...moment.value
-      }
-
-      publishMoment(params).then((res) => {
-        if (res.code === 200) {
-          console.log('发表动态成功~')
-        }
-      })
-    }
+const onConfirm = (formRef: any) => {
+  console.log('编辑器的值：', moment.value)
+  formRef.validate((isValid: any) => {
+    console.log('isValid: ', isValid)
+    console.log('1111111111111')
   })
 }
 
@@ -34,13 +27,8 @@ const onReset = () => {
   richTextRef.value?.editorRef.clear()
 }
 
-const isEmpty = () => {
-  return !richTextRef.value?.editorRef.getText().trim().length
-}
-
 const validateRichText = (rule: any, value: any, callback: any) => {
   if (isEmpty()) callback('动态内容不能为空！')
-  else callback()
 }
 
 const rules = {
@@ -55,12 +43,6 @@ const rules = {
       max: 20,
       message: '动态标题长度为3到20位之间！',
       trigger: 'change'
-    }
-  ],
-  content: [
-    {
-      required: true,
-      validator: validateRichText
     }
   ]
 }
@@ -83,12 +65,21 @@ const rules = {
             placeholder="请输入标题"
           />
         </el-form-item>
-        <el-form-item label="内容" prop="content">
+        <el-form-item
+          label="内容"
+          prop="content"
+          :rules="{
+            required: true,
+            validator: validateRichText
+          }"
+        >
           <RichText v-model="moment.content" ref="richTextRef" />
         </el-form-item>
       </el-form>
       <div class="operate">
-        <el-button type="primary" @click="onConfirm">确定</el-button>
+        <el-button type="primary" @click="onConfirm(momentFormRef)"
+          >确定</el-button
+        >
         <el-button type="danger" @click="onReset">重置</el-button>
       </div>
     </div>
