@@ -29,28 +29,33 @@ export function loadLocalRoutes() {
 export function mapMenusToRoutes(userMenus: any[]) {
   const allRoutes = loadLocalRoutes()
 
+  console.log('allRoutes: ', allRoutes)
+  console.log('userMenus: ', userMenus)
+
   const routes: RouteRecordRaw[] = []
 
   const _recurseGetRoute = (menus: any[], firstMenu?: any) => {
     for (const menu of menus) {
       if (menu.type === 2) {
+        // 二级菜单（也是二级路由）
         const route = allRoutes.find((route) => route.path === menu.url)
         if (route) {
           // 1.给一级菜单添加重定向功能(但是只需要添加一次即可)
           if (
             firstMenu &&
-            !routes.find((item) => item.path === firstMenu.url)
+            !routes.find((item) => item.path === firstMenu.url) // 为了保证只添加一次
           ) {
-            routes.push({ path: firstMenu.url, redirect: route.path })
+            routes.push({ path: firstMenu.url, redirect: route.path }) // 重定向到找到的第一个菜单
           }
 
           // 2.二级菜单对应的路径
           routes.push(route)
 
           // 3.第一个匹配到的菜单
-          initMenu ||= menu
+          initMenu ||= menu // 其实也是个重定向进入 /main 时跳到用户的第一个菜单
         }
-      } else {
+      } else if (menu.type === 1) {
+        // 一级菜单（其实是二级路由）
         _recurseGetRoute(menu.children ?? [], menu)
       }
     }
@@ -84,6 +89,10 @@ export function mapPathToMenu(
       // 二级菜单
       return menu
     }
+  }
+
+  if (breadcrumbs) {
+    if (path === '/main/profile') breadcrumbs?.push({ name: '个人中心' })
   }
 }
 

@@ -1,43 +1,50 @@
-<script setup lang="ts" name="menu-c">
+<script setup lang="ts" name="list-table">
 import PageContent from '@/components/page-content/page-content.vue'
-import PagePopup from '@/components/page-popup/page-popup.vue'
-import { contentConfig, popupConfig } from './config'
-import { useSystemStore } from '@/stores'
+import { contentConfig } from './config'
 import { ElMessageBox, ElMessage } from 'element-plus'
-import { ref } from 'vue'
+import { deleteMoment } from '@/service/main/story'
+import { useSystemStore } from '@/stores'
 
 const systemStore = useSystemStore()
 
-import { usePagePopup } from '@/hooks'
+const emits = defineEmits(['changeComp'])
 
-const { pagePopupRef, onCreate, onUpdate, defaultInfo } = usePagePopup()
+const onUpdate = (row: any) => {
+  emits('changeComp', 'ListPanel', row)
+}
+
+const onDetail = (row: any) => {
+  emits('changeComp', 'ListDetail', row)
+}
 
 const onDelete = (row: any) => {
   const statment = '确定删除吗？'
 
   ElMessageBox.confirm(statment, '系统提示', {
-    center: true
+    center: true,
+    customClass: 'msg-box'
   }).then(
-    () => systemStore.deletePageItem('menu', row.id),
+    () => systemStore.deletePageItem('moment', row.id),
     () => {}
   )
 }
 
-const otherInfo = ref<any>({})
-
-const onAddChild = (row: any) => {
-  otherInfo.value.parentId = row.id
-  onCreate()
+const onCreate = () => {
+  emits('changeComp', 'ListPanel')
 }
 </script>
 
 <template>
-  <div class="menu">
+  <div class="list">
     <PageContent
+      pageName="moment"
+      ref="pageContentRef"
       :contentConfig="contentConfig"
-      pageName="menu"
       @create="onCreate"
     >
+      <template #author="{ row }">
+        <span>{{ row.author?.name }}</span>
+      </template>
       <!-- 添加下级 -->
       <template #subhandler="{ row }">
         <el-button
@@ -54,8 +61,8 @@ const onAddChild = (row: any) => {
           size="small"
           type="primary"
           v-if="row.type !== 3"
-          @click="onAddChild(row)"
-          >新增下级</el-button
+          @click="onDetail(row)"
+          >详情</el-button
         >
         <el-button
           link
@@ -67,18 +74,21 @@ const onAddChild = (row: any) => {
         >
       </template>
     </PageContent>
-    <PagePopup
-      pageName="menu"
-      ref="pagePopupRef"
-      :defaultInfo="defaultInfo"
-      :popupConfig="popupConfig"
-      :otherInfo="otherInfo"
-    />
   </div>
 </template>
 
-<style scoped>
-.menu {
-  height: 100%;
+<style scoped lang="less">
+:global(.el-overlay.is-message-box .el-overlay-message-box) {
+  top: 15vh;
+  bottom: auto;
+  z-index: 99999;
+}
+.list {
+  padding: 20px;
+
+  .page-content {
+    border-top: none;
+    padding-top: 0px;
+  }
 }
 </style>

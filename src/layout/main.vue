@@ -1,6 +1,6 @@
-<script lang="ts" setup name="main-m">
-import TopHeader from './cpns/top-header/index.vue'
-import MainAside from './cpns/main-aside/index.vue'
+<script lang="ts" setup name="main-container">
+import MainHeader from './main-header/main-header.vue'
+import MainAside from './main-aside/main-aside.vue'
 
 import { ref } from 'vue'
 
@@ -17,21 +17,22 @@ const onFoldChange = (isFold: boolean) => (isCollapse.value = isFold)
       </el-aside>
       <el-container class="page">
         <el-header class="page-header" height="48px">
-          <top-header @fold-change="onFoldChange" />
+          <MainHeader @foldChange="onFoldChange" />
         </el-header>
-        <el-main class="page-content">
+        <el-main class="page-content" id="global-scroll-wrap">
           <div class="wrapper">
             <router-view v-slot="{ Component }">
               <transition name="zhr" mode="out-in">
-                <keep-alive exclude="dashboard">
-                  <component :is="Component"></component>
-                </keep-alive>
+                <!-- <keep-alive exclude="dashboard"> -->
+                <component :is="Component"></component>
+                <!-- </keep-alive> -->
               </transition>
             </router-view>
           </div>
         </el-main>
       </el-container>
     </el-container>
+    <el-backtop :right="100" :bottom="100" target="#global-scroll-wrap" />
   </div>
 </template>
 
@@ -63,11 +64,14 @@ const onFoldChange = (isFold: boolean) => (isCollapse.value = isFold)
   }
 
   .page {
+    height: 100%;
     .page-header {
       background-color: aqua;
     }
 
     .page-content {
+      height: calc(100% - 48px);
+      overflow-y: auto;
       background-color: #f0f2f5;
 
       .wrapper {

@@ -2,11 +2,13 @@ export const contentConfig = {
   tableItems: [
     {
       prop: 'title',
+      minWidth: '200',
       label: '动态标题'
     },
     {
       prop: 'author',
       label: '动态作者',
+      minWidth: '100',
       slotName: 'author'
     },
     {
@@ -21,7 +23,7 @@ export const contentConfig = {
       minWidth: '200',
       slotName: 'updateAt'
     },
-    { label: '操作', minWidth: '130', slotName: 'handler' }
+    { label: '操作', minWidth: '180', slotName: 'subhandler' }
   ],
   title: '故事列表'
 }

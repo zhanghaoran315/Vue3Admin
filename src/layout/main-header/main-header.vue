@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import UserInfo from '../user-info/index.vue'
+import UserInfo from './conponents/userInfo.vue'
 import BreadCrumb from '@/base-ui/breadcrumb'
 import { ref, computed } from 'vue'
 import { useRoute } from 'vue-router'

@@ -2,9 +2,11 @@ import axios from 'axios'
 import type { AxiosInstance } from 'axios'
 
 import type { HrInterceptor, HrRequestConfig } from './type'
-import { ElLoading } from 'element-plus'
+import { ElLoading, ElMessage } from 'element-plus'
 
-const DEFAULT_SHOWLOADING = true
+import router from '@/router'
+
+const DEFAULT_SHOWLOADING = false
 
 /**
  * 拦截器的处理
@@ -51,10 +53,15 @@ class HrRequest {
       (response) => {
         // console.log('全局的拦截器-响应成功')
         this.loadingInstance?.close()
-        return response.data
+        const { data } = response
+        if (data.code === 401) {
+          ElMessage.error(data.message)
+          return router.push('/login')
+        }
+        return data
       },
       (error) => {
-        // console.log('全局的拦截器-响应失败')
+        console.log('全局的拦截器-响应失败', error)
         this.loadingInstance?.close()
         return error
       }

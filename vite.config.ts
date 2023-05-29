@@ -48,6 +48,7 @@ export default defineConfig({
     proxy: {
       '^/api': {
         target: 'http://localhost:5000',
+        // target: 'http://123.207.32.32:5000',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, () => {
           console.log('进入了proxy-api');

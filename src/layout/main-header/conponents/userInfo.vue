@@ -4,13 +4,22 @@ import { useRouter } from 'vue-router'
 import { localCache } from '@/utils'
 import { LOGIN_TOKEN } from '@/global'
 import ScreenFull from 'screenfull'
+import { useLoginStore } from '@/stores'
+import { storeToRefs } from 'pinia'
 
-const userName = ref('Coderzhr')
+const loginStore = useLoginStore()
+const { userInfo } = storeToRefs(loginStore)
+
+const avatarUrl = userInfo.value.avatarUrl
+const userName = userInfo.value.name
 
 const router = useRouter()
 
 const onCommand = (type: string) => {
   switch (type) {
+    case 'profile':
+      router.push('/main/profile')
+      break
     case 'max':
       router.push('/screenfull')
       break
@@ -49,11 +58,7 @@ const onFullScreen = () => {
     </el-icon>
     <el-dropdown @command="onCommand">
       <div class="dropdown">
-        <el-avatar
-          :size="30"
-          fit="contain"
-          src="https://foruda.gitee.com/avatar/1671210233576566357/9600205_zhang-hara_1671210232.png!avatar200"
-        />
+        <el-avatar :size="30" fit="contain" :src="avatarUrl" />
         <span class="text">{{ userName }}</span>
         <el-icon class="el-icon--right">
           <arrow-down />
@@ -61,6 +66,10 @@ const onFullScreen = () => {
       </div>
       <template #dropdown>
         <el-dropdown-menu>
+          <el-dropdown-item command="profile">
+            <el-icon><User /></el-icon>
+            个人中心
+          </el-dropdown-item>
           <el-dropdown-item command="max">
             <el-icon><PieChart /></el-icon>
             大屏适配

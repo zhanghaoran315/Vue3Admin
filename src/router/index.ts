@@ -3,6 +3,11 @@ import type { RouteRecordRaw } from 'vue-router'
 import { LOGIN_TOKEN } from '@/global'
 import { localCache, initMenu } from '@/utils'
 
+// 个人中心
+import Profile from './main/profile/profile'
+// 故事详情
+import storyDetail from './main/story/list/detail'
+
 const routes: RouteRecordRaw[] = [
   {
     path: '/',
@@ -11,8 +16,8 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/main',
     name: 'main',
-    component: () => import('@/views/main/index.vue'),
-    children: []
+    component: () => import('@/layout/main.vue'),
+    children: [Profile, storyDetail]
   },
   {
     path: '/login',

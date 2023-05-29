@@ -2,7 +2,7 @@
 import HrTable from '@/base-ui/table'
 import { useSystemStore } from '@/stores'
 import { storeToRefs } from 'pinia'
-import { ref, watch, onActivated, onDeactivated } from 'vue'
+import { ref, watch, onActivated, onDeactivated, onMounted } from 'vue'
 import { usePermission } from '@/hooks'
 import { ElMessageBox, ElMessage } from 'element-plus'
 
@@ -62,7 +62,10 @@ systemStore.$onAction(({ name, after }) => {
 })
 
 watch(queryInfo, () => getPageData())
-getPageData()
+
+onMounted(() => {
+  getPageData()
+})
 
 // 4.实现跨组件插槽
 // 4.1 获取其他动态插槽的名称
@@ -158,7 +161,6 @@ defineExpose({ getPageData })
           <slot
             :name="item.slotName"
             :row="scope.row"
-            :column="scope.column"
             :prop="scope.prop"
           ></slot>
         </template>
